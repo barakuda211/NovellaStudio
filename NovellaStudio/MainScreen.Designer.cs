@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-
+﻿
 namespace NovellaStudio
 {
     partial class MainScreen
@@ -43,26 +41,9 @@ namespace NovellaStudio
             this.Name = "MainScreen";
             this.Text = "Novella Studio";
             this.UseWaitCursor = true;
-            InitForm();
             this.Load += new System.EventHandler(this.MainScreen_Load);
-            this.ResumeLayout(false);
-            
-
+            this.ResumeLayout(false);        
         }
-
-        private int InitForm()
-        {
-            if (File.Exists("init.txt"))
-            {
-                var initInfo = File.ReadAllLines("init.txt", Encoding.UTF8);
-                this.Text = initInfo[0];
-                return 1;
-            }
-
-            return 0;
-        }
-
-
 
         #endregion
     }
