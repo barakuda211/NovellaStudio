@@ -36,13 +36,15 @@ namespace NovellaStudio
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(1280, 720);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "MainScreen";
             this.Text = "Novella Studio";
             this.UseWaitCursor = true;
             this.Load += new System.EventHandler(this.MainScreen_Load);
-            this.ResumeLayout(false);        
+            this.ResumeLayout(false);
+
         }
 
         #endregion

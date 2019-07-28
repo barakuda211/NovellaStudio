@@ -29,6 +29,7 @@ namespace NovellaStudio
             {
                 var initInfo = File.ReadAllLines("init.txt", Encoding.UTF8);
                 this.Text = initInfo[0];
+                this.BackgroundImage = new Bitmap(initInfo[1]);
                 return 1;
             }
 
