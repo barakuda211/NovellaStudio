@@ -17,6 +17,8 @@ namespace NovellaStudio
         private int scale { get; set; }
         private Bitmap pic { get; set; }
 
+
+        public string Name { get; }
         public int X
         {
             get { return x; }
@@ -37,6 +39,7 @@ namespace NovellaStudio
             get { return pic; }
             set { pic = value; }
         }
+        
 
         /// <summary>
         /// Прост
@@ -50,8 +53,9 @@ namespace NovellaStudio
         /// <param name="y"></param>
         /// <param name="scale"></param>
         /// <param name="pic"></param>
-        public Sprite(int x, int y, int scale, Bitmap pic)
+        public Sprite(string name, int x, int y, int scale, Bitmap pic)
         {
+            Name = name;
             this.x = x;
             this.y = y;
             this.scale = scale;
@@ -65,8 +69,9 @@ namespace NovellaStudio
         /// <param name="y"></param>
         /// <param name="scale"></param>
         /// <param name="path"></param>
-        public Sprite(int x, int y, int scale, string path)
+        public Sprite(string name, int x, int y, int scale, string path)
         {
+            Name = name;
             this.x = x;
             this.y = y;
             this.scale = scale;
