@@ -22,10 +22,13 @@ namespace NovellaStudio
         /// <summary>
         /// Конструктор
         /// </summary>
-        public Frame(Bitmap backGround, List<(string,int,int,int,string)> spritesAndPos, List<SoundPlayer> sounds, SoundPlayer music,Frame pervious)
+        public Frame(Bitmap backGround, List<(string,int,int,int,string)> spritesAndPos, List<SoundPlayer> sounds, SoundPlayer music,Frame previous)
         {
-            back = backGround;
-            sprites = new Dictionary<string, Sprite>(pervious.Sprites);
+            if (backGround != null)
+                back = backGround;
+            else
+                back = previous.Background;
+            sprites = new Dictionary<string, Sprite>(previous.Sprites);
             foreach (var x in spritesAndPos)
             {
                 string name = x.Item1;
