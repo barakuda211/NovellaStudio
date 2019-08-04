@@ -17,8 +17,8 @@ namespace NovellaStudio
 
     public partial class MainScreen : Form
     {
-        static Frame defaultFrame = new Frame(new Bitmap(@"default/defBack.jpg"),("Летов","Ты не должен был сюда попасть!"), null, null, null, null);
-        static List<Frame> Script = new List<Frame>();
+        private Frame defaultFrame;
+        private List<Frame> Script = new List<Frame>();
         private SoundPlayer nya = new SoundPlayer(@"default/nya.wav");
 
         public MainScreen()
@@ -43,22 +43,30 @@ namespace NovellaStudio
                 return 0;
 
             var initInfo = File.ReadAllLines(path, Encoding.UTF8);
-            this.Text = initInfo[0];
-            this.BackgroundImage = new Bitmap(initInfo[1]);
+            Text = initInfo[0];
+            BackgroundImage = new Bitmap(initInfo[1]);
             InitScript(initInfo[2]);
             return 1;
             
         }
 
-        
 
+        private void InitDefault()
+        {
+            var music = new SoundPlayer[] { new SoundPlayer("default/defMusic.mp3") }.ToList();
+            var sound = new SoundPlayer[] { new SoundPlayer("default/nya.wav") }.ToList();
+            var spr = new (string, int, int, int, string)[] { ("Алиса", 300, 300, 1, "default /alice.png") }.ToList();
+            var txt = new (string, string)[] { ("Летов", "Ты не должен был сюда попасть!") }.ToList();
+            defaultFrame = new Frame(new Bitmap("default/defBack.jpg"), music, new List<string>(), sound, new List<string>(), spr, txt, defaultFrame);
+        }
 
-        static int InitScript(string path = "scen1.txt")
+        private int InitScript(string path = "scen1.txt")
         {
             try
             {
                 if (!File.Exists(path))
                     throw new ScriptNotFoundException();
+                Script.Add(defaultFrame);
                 var file = File.ReadAllLines(path).ToList();
                 int i = 0;
                 while (i <= file.Count)
@@ -77,7 +85,7 @@ namespace NovellaStudio
             }
         }
 
-        static Frame ConvertFrame(ref int i,ref List<string> file)
+        private Frame ConvertFrame(ref int i,ref List<string> file)
         {
             if (file[i] != "[")
                 throw new ScriptTextException();
@@ -144,7 +152,7 @@ namespace NovellaStudio
             return null;
         }
 
-        static void ConvertText(ref int i, ref List<(string, string)> lst, ref List<string> file)
+        private void ConvertText(ref int i, ref List<(string, string)> lst, ref List<string> file)
         {
             while (true)
             {
@@ -173,7 +181,7 @@ namespace NovellaStudio
             }
         }
 
-        static void ConvertSprites(ref int i, ref List<(string, int, int, int, string)> lst,ref List<string> file)
+        private void ConvertSprites(ref int i, ref List<(string, int, int, int, string)> lst,ref List<string> file)
         {
             while (true)
             {
