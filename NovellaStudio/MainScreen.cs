@@ -90,10 +90,11 @@ namespace NovellaStudio
             var listOfDelMusic = new List<string>();
             var sounds = new List<SoundPlayer>();
             var spritesAndPos = new List<(string, int, int, int, string)>();
+            var clearSprites = false;
             var listOfDelSprites = new List<string>();
-            var textList = new List<string>();
+            var textList = new List<(string, string)>();
 
-            while (i<file.Count-1 && IsFrameRead)
+            while (!IsFrameRead)
             {
                 i++;
                 if (i == file.Count)
@@ -119,6 +120,9 @@ namespace NovellaStudio
                         for (int j = 1; j < line.Length; j++)
                             sounds.Add(new SoundPlayer(line[j]));
                         continue;
+                    case "@clearsprites":
+                        clearSprites = true;
+                        continue;
                     case "@delsprites":
                         for (int j = 1; j < line.Length; j++)
                             listOfDelSprites.Add(line[j]);
@@ -129,6 +133,9 @@ namespace NovellaStudio
                     case "@text":
                         ConvertText(ref i, ref textList, ref file);
                         continue;
+                    case "]":
+                        IsFrameRead = true;
+                        continue;
                 }
                 var frame = new Frame();
                 
@@ -137,7 +144,7 @@ namespace NovellaStudio
             return null;
         }
 
-        static void ConvertText(ref int i, ref List<string> lst, ref List<string> file)
+        static void ConvertText(ref int i, ref List<(string, string)> lst, ref List<string> file)
         {
             while (true)
             {
@@ -151,14 +158,18 @@ namespace NovellaStudio
                 if (line[0] == "@nl")
                 {
                     if (lst.Count == 0)
-                        lst.Add(Environment.NewLine.ToString());
-                    else
-                        lst[lst.Count - 1] += Environment.NewLine.ToString();
-                    if (i + 1 < file.Count && file[i + 1] != "]" && file[i+1]!="@nl")
-                        lst[lst.Count] += file[++i];
+                        throw new ScriptTextException();
+                    //lst[lst.Count - 1] += Environment.NewLine.ToString();
+
+
+                    if (i + 1 < file.Count && file[i + 1] != "]" && file[i + 1] != "@nl")
+                        lst[lst.Count] = (lst[lst.Count].Item1, file[++i]);
                 }
                 else
-                    lst.Add(file[i]);
+                {
+                    var split = file[i].Split('|');
+                    lst.Add((split[0],split[1]));
+                }
             }
         }
 
