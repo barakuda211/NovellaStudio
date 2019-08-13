@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static NovellaStudio.MyExceptions;
+using static NovellaStudio.Painter;
 
 namespace NovellaStudio
 {
@@ -17,14 +18,15 @@ namespace NovellaStudio
 
     public partial class MainScreen : Form
     {
-        private Frame defaultFrame;
-        private List<Frame> Script = new List<Frame>();
-        private SoundPlayer nya = new SoundPlayer(@"default/nya.wav");
-
+        public Frame defaultFrame;
+        public List<Frame> Script = new List<Frame>();
+        public Dictionary<string, PictureBox> Sprites = new Dictionary<string, PictureBox>();
+        public Dictionary<string, SoundPlayer> PlayingMusic = new Dictionary<string, SoundPlayer>();
+        
+ 
         public MainScreen()
         {
             InitializeComponent();
-            InitForm();
         }
 
         private void MainScreen_KeyDown(object sender, KeyEventArgs e)
@@ -35,7 +37,8 @@ namespace NovellaStudio
         private void MainScreen_Load(object sender, EventArgs e)
         {
             InitForm();
-            nya.Play();
+            if (InitForm() == 1)
+                DrawFrames(Script, this);
         }
         private int InitForm(string path = @"default\init.txt")
         {
@@ -53,11 +56,11 @@ namespace NovellaStudio
 
         private void InitDefault()
         {
-            var music = new SoundPlayer[] { new SoundPlayer("default/defMusic.mp3") }.ToList();
-            var sound = new SoundPlayer[] { new SoundPlayer("default/nya.wav") }.ToList();
-            var spr = new (string, int, int, int, string)[] { ("Алиса", 300, 300, 1, "default /alice.png") }.ToList();
+            var music = new SoundPlayer[] { new SoundPlayer(@"default/defMusic.mp3") }.ToList();
+            var sound = new SoundPlayer[] { new SoundPlayer(@"default/nya.wav") }.ToList();
+            var spr = new (string, int?, int?, int?, string)[] { ("Алиса", 300, 300, 1, @"default /alice.png") }.ToList();
             var txt = new (string, string)[] { ("Летов", "Ты не должен был сюда попасть!") }.ToList();
-            defaultFrame = new Frame(new Bitmap("default/defBack.jpg"), music, new List<string>(), sound, new List<string>(), spr, txt, defaultFrame);
+            defaultFrame = new Frame(new Bitmap(@"default/defBack.jpg"), music, new List<string>(), sound, new List<string>(), spr, txt);
         }
 
         private int InitScript(string path = "scen1.txt")
@@ -69,7 +72,7 @@ namespace NovellaStudio
                 Script.Add(defaultFrame);
                 var file = File.ReadAllLines(path).ToList();
                 int i = 0;
-                while (i <= file.Count)
+                while (i < file.Count)
                 {
                     Script.Add(ConvertFrame(ref i, ref file));
                 }
@@ -92,12 +95,12 @@ namespace NovellaStudio
             file.RemoveAll(x => x.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 0);    //удаление пустых строк
             bool IsFrameRead = false;
 
-            Bitmap background;
+            Bitmap back = null;
             var music = new List<SoundPlayer>();
             var clearMusic = false;
             var listOfDelMusic = new List<string>();
             var sounds = new List<SoundPlayer>();
-            var spritesAndPos = new List<(string, int, int, int, string)>();
+            var spritesAndPos = new List<(string, int?, int?, int?, string)>();
             var clearSprites = false;
             var listOfDelSprites = new List<string>();
             var textList = new List<(string, string)>();
@@ -111,11 +114,14 @@ namespace NovellaStudio
                 switch (line[0])
                 {
                     case "@background":
-                        background = new Bitmap(line[1]);
+                        back = new Bitmap(line[1]);
                         continue;
                     case "@music":
-                        for (int j = 1; j < line.Length; j++)
-                            music.Add(new SoundPlayer(line[j]));
+                        if (line.Length > 1 && music == null)
+                            music = new List<SoundPlayer>();
+                        if (music!=null)
+                            for (int j = 1; j < line.Length; j++)
+                                music.Add(new SoundPlayer(line[j]));
                         continue;
                     case "@delmusic":
                         for (int j = 1; j < line.Length; j++)
@@ -145,11 +151,9 @@ namespace NovellaStudio
                         IsFrameRead = true;
                         continue;
                 }
-                var frame = new Frame();
-                
             }
-
-            return null;
+            i++;
+            return new Frame(back, music, listOfDelMusic, sounds, listOfDelSprites, spritesAndPos, textList, clearMusic, clearSprites); ;
         }
 
         private void ConvertText(ref int i, ref List<(string, string)> lst, ref List<string> file)
@@ -171,7 +175,7 @@ namespace NovellaStudio
 
 
                     if (i + 1 < file.Count && file[i + 1] != "]" && file[i + 1] != "@nl")
-                        lst[lst.Count] = (lst[lst.Count].Item1, file[++i]);
+                        lst[lst.Count-1] = (lst[lst.Count-1].Item1, file[++i]);
                 }
                 else
                 {
@@ -181,7 +185,7 @@ namespace NovellaStudio
             }
         }
 
-        private void ConvertSprites(ref int i, ref List<(string, int, int, int, string)> lst,ref List<string> file)
+        private void ConvertSprites(ref int i, ref List<(string, int?, int?, int?, string)> lst,ref List<string> file)
         {
             while (true)
             {
@@ -194,7 +198,7 @@ namespace NovellaStudio
                 var line = file[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 string name = line[0];
                 line.RemoveAt(0);
-                int x = int.MinValue; int y = int.MinValue; int scale = int.MinValue; string path = "";
+                int? x = null; int? y = null; int? scale = null; string path = null;
                 foreach (var word in line)
                 {
                     if (word.StartsWith("x:"))

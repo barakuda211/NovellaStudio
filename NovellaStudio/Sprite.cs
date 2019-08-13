@@ -12,24 +12,24 @@ namespace NovellaStudio
     /// </summary>
     public class Sprite
     {
-        private int x { get; set; }
-        private int y { get; set; }
-        private int scale { get; set; }
+        private int? x { get; set; }
+        private int? y { get; set; }
+        private int? scale { get; set; }
         private Bitmap pic { get; set; }
 
 
         public string Name { get; }
-        public int X
+        public int? X
         {
             get { return x; }
             set { x = value; }
         }
-        public int Y
+        public int? Y
         {
             get { return y; }
             set { y = value; }
         }
-        public int Scale
+        public int? Scale
         {
             get { return scale; }
             set { scale = value; }
