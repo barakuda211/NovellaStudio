@@ -31,20 +31,22 @@ namespace NovellaStudio
 
         private void MainScreen_KeyDown(object sender, KeyEventArgs e)
         {
+            
             return;
         }
 
         private void MainScreen_Load(object sender, EventArgs e)
         {
             InitForm();
+            
             if (InitForm() == 1)
                 DrawFrames(Script, this);
+            
         }
         private int InitForm(string path = @"default\init.txt")
         {
             if (!File.Exists(path))
                 return 0;
-
             var initInfo = File.ReadAllLines(path, Encoding.UTF8);
             Text = initInfo[0];
             BackgroundImage = new Bitmap(initInfo[1]);
@@ -67,6 +69,7 @@ namespace NovellaStudio
         {
             try
             {
+                
                 if (!File.Exists(path))
                     throw new ScriptNotFoundException();
                 Script.Add(defaultFrame);
@@ -76,6 +79,7 @@ namespace NovellaStudio
                 {
                     Script.Add(ConvertFrame(ref i, ref file));
                 }
+                
                 return 1;
             }
             catch (ScriptNotFoundException e)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Media;
@@ -10,6 +11,11 @@ namespace NovellaStudio
 {
     public static class Painter
     {
+        /// <summary>
+        /// Ввод данных с фреймов на экран
+        /// </summary>
+        /// <param name="lst"></param>
+        /// <param name="screen"></param>
         public static void DrawFrames(List<Frame> lst, MainScreen screen )
         {
             if (lst == null || lst.Count == 0)
@@ -53,7 +59,22 @@ namespace NovellaStudio
                 {
                     if (screen.Sprites.ContainsKey(x.Name))
                     {
-                        
+                        if (x.Pic != null)     //Присваиваем картинку
+                            screen.Sprites[x.Name].Image = x.Pic;
+
+                        if (x.X != null)       //Присваиваем X
+                            screen.Sprites[x.Name].Location = new Point((int)x.X, screen.Sprites[x.Name].Location.Y);
+
+                        if (x.Y != null)       //Присваиваем Y
+                            screen.Sprites[x.Name].Location = new Point(screen.Sprites[x.Name].Location.X, (int)x.Y);
+
+                        if (x.Scale != null)   //Меняем Scale
+                            screen.Sprites[x.Name].Scale(new SizeF((float)(screen.Sprites[x.Name].Image.Width * x.Scale), (float)(screen.Sprites[x.Name].Image.Height * x.Scale)));
+                    }
+                    else
+                    {
+                        var pic = SpriteToPictureBox(x,screen);
+                        screen.Sprites.Add(pic.Name, pic);
                     }
                 }
 
@@ -61,10 +82,28 @@ namespace NovellaStudio
             }
         }
 
-        public static void EditPictureBox(ref PictureBox pic, Sprite sprite)
+        /// <summary>
+        /// Создаёт PictureBox по спрайту
+        /// </summary>
+        /// <param name="sprite"></param>
+        /// <returns></returns>
+        public static PictureBox SpriteToPictureBox(Sprite sprite, MainScreen screen)
         {
-            
+            if (sprite == null)
+                return null;
+
+            var res = new PictureBox();
+
+            res.Name = sprite.Name;
+            res.Image = sprite.Pic;
+            res.Location = new Point((int)sprite.X, (int)sprite.Y);
+            res.Scale(new SizeF((float)(res.Image.Width * sprite.Scale), (float)(res.Image.Height * sprite.Scale)));
+            res.Visible = true;
+            res.Parent = screen;
+            return res;
         }
+
+       
 
     }
 }

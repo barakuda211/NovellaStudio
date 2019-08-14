@@ -53,7 +53,7 @@ namespace NovellaStudio
         /// <param name="y"></param>
         /// <param name="scale"></param>
         /// <param name="pic"></param>
-        public Sprite(string name, int x, int y, int scale, Bitmap pic)
+        public Sprite(string name, int? x, int? y, int? scale, Bitmap pic)
         {
             Name = name;
             this.x = x;
@@ -69,7 +69,7 @@ namespace NovellaStudio
         /// <param name="y"></param>
         /// <param name="scale"></param>
         /// <param name="path"></param>
-        public Sprite(string name, int x, int y, int scale, string path)
+        public Sprite(string name, int? x, int? y, int? scale, string path)
         {
             Name = name;
             this.x = x;
